@@ -1,0 +1,29 @@
+
+## 安装Docker Compose
+# curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+# chmod +x /usr/local/bin/docker-compose
+# docker-compose --version
+# docker-compose up -d
+version: '2.4'
+networks:
+    br0:
+      external: true
+
+services:
+  ethereum.node1:
+    container_name: ethereum.node1
+    image: ethereum/client-go:v1.9.21
+    hostname: ethereum.node1
+    mem_limit: 300m
+    ports:
+      - "127.0.0.1:8545:8545"
+      - 30303:30303
+    entrypoint: ["sh", "-c", "while true; do echo 1 >/dev/null 2>/dev/null; sleep 1; done"]
+    #entrypoint: ["geth", "--ropsten", "console"]
+    #command: ["--rpc", "--rpcaddr", "0.0.0.0", "--rpcapi", "personal,db,eth,net,web3,admin,txpool,miner", "--networkid", "100", "--rpccorsdomain", "*"]
+    volumes:
+      - ./ethereum:/root:rw
+    restart: always
+    networks:
+      br0:
+        ipv4_address: 172.16.197.214
